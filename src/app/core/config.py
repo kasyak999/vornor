@@ -4,12 +4,15 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """Настройки подключения к базе данных."""
 
+    app_title: str = 'vornor'
+    description: str = 'Систеама для торговли криптовалютой'
+
     postgres_user: str = 'user'
     postgres_password: str = 'mysecretpassword'
     postgres_db: str = 'django'
     postgres_port: str = '5433'
     secret: str = 'SECRET'
-    DEBUG: bool = False
+    DEBUG: bool = True
 
     @property
     def database_url(self) -> str:
@@ -22,7 +25,7 @@ class Settings(BaseSettings):
         return db + db_host + f'/{self.postgres_db}'
 
     class Config:
-        env_file = './.env'
+        env_file = '.env'
 
 
 settings = Settings()

@@ -1,0 +1,1 @@
+from .cion import Coin # noqa
