@@ -1,0 +1,10 @@
+volumes:
+  db_data:
+services:
+  db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT}:5432"
