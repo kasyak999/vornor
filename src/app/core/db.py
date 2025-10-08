@@ -22,6 +22,7 @@ class PreBase:
         DateTime,
         server_default=func.now(),
         nullable=False,
+        comment='Дата создания',
     )
 
 

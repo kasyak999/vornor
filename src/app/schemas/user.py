@@ -1,9 +1,11 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class UserCreate(BaseModel):
     """Создание пользователя."""
     telegram_id: int
+    password: Optional[str] = None
 
 
 class UserToken(BaseModel):

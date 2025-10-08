@@ -1,6 +1,6 @@
 from sqlalchemy import Integer
 from app.core.db import Base
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 class User(Base):
@@ -10,7 +10,29 @@ class User(Base):
         Integer,
         nullable=False,
         unique=True,
-        comment='Название монеты',
+        comment='Телеграм id',
+    )
+    is_superuser: Mapped[bool] = mapped_column(
+        default=False,
+        comment='Статус суперпользователя',
+    )
+    password: Mapped[str] = mapped_column(
+        nullable=True,
+        comment='Хеш пароля',
+    )
+    api_key: Mapped[str] = mapped_column(
+        nullable=True,
+        comment='API key от биржи',
+    )
+    coins: Mapped[list["Coin"]] = relationship(
+        "Coin",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    coin_slots: Mapped[list["CoinSlot"]] = relationship(
+        "CoinSlot",
+        back_populates="user",
+        cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:

@@ -1,7 +1,6 @@
-from sqlalchemy import String, Float, Boolean, DateTime, func, ForeignKey, Integer
+from sqlalchemy import String, Float, Boolean, ForeignKey, Integer
 from app.core.db import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from datetime import datetime
 from sqlalchemy import UniqueConstraint
 
 
@@ -48,11 +47,11 @@ class Coin(Base):
         comment='ID ордера на продажу',
     )
     user_id: Mapped[int] = mapped_column(
-        Integer,
-        # ForeignKey('users.id', ondelete='CASCADE'),
+        ForeignKey('user.id', ondelete='CASCADE', name='fk_coin_user_id'),
         nullable=False,
         comment='ID пользователя',
     )
+    user: Mapped["User"] = relationship("User", back_populates="coins")
 
     def __repr__(self) -> str:
         return f'{self.name}'
