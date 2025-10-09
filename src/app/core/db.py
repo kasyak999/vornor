@@ -1,11 +1,10 @@
-from sqlalchemy import Column, Integer, DateTime
+from sqlalchemy import DateTime
 # from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from datetime import datetime
 from sqlalchemy.orm import (
     declarative_base, declared_attr, mapped_column, Mapped
 )
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from sqlalchemy.sql import func
 from app.core.config import settings
 
 
@@ -20,7 +19,7 @@ class PreBase:
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        server_default=func.now(),
+        default=lambda: datetime.now().replace(microsecond=0),
         nullable=False,
         comment='Дата создания',
     )

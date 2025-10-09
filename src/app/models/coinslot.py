@@ -1,15 +1,30 @@
-from sqlalchemy import String, Float, Boolean, ForeignKey, Integer, DateTime
+from sqlalchemy import ForeignKey, DateTime
 from app.core.db import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import UniqueConstraint
-from datetime import datetime
+from datetime import datetime, timedelta
+
+
+def default_end_date():
+    """Возвращает текущую дату + 30 дней."""
+    dt = datetime.now() + timedelta(days=30)
+    return dt.replace(microsecond=0)
 
 
 class CoinSlot(Base):
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    start_date: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    end_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    """Модель слота для монеты."""
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("user.id", ondelete="CASCADE"),
+        nullable=False,
+        comment='ID пользователя',
+    )
+    end_date: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=default_end_date,
+        nullable=True,
+        comment='Дата окончания слота',
+    )
 
     user: Mapped["User"] = relationship("User", back_populates="coin_slots")
+
+    def __repr__(self) -> str:
+        return 'слот'

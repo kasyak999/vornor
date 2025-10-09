@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime, timedelta
 from app.core.db import get_async_session
-from app.crud.user import user_crud
+from app.crud import user_crud, coinslot_crud
 from app.schemas.user import UserCreate, UserToken, UserDB
 from app.api.validators import check_user, check_not_user
 from app.models import User
 from app.services.user import get_current_user
+from app.schemas.coinslot import CoinSlotCreate
+
 
 router = APIRouter(prefix='/user', tags=['Работа с пользователем'])
 
@@ -36,7 +39,9 @@ async def register(
     user = await user_crud.get_user_by_telegram_id(
         telegram_id.telegram_id, session)
     await check_user(user)
-    return await user_crud.create(telegram_id, session)
+    result = await user_crud.create(telegram_id, session)
+    await coinslot_crud.create(CoinSlotCreate(user_id=result.id), session)
+    return result
 
 
 @router.post(

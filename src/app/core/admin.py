@@ -7,7 +7,7 @@ from sqlalchemy import inspect
 from passlib.context import CryptContext
 
 from app.core.db import engine
-from app.models import User, Coin
+from app.models import User, Coin, CoinSlot
 
 
 def get_column_comments(model):
@@ -21,18 +21,30 @@ def get_column_comments(model):
 
 class UserAdmin(ModelView, model=User):
     column_list = [
-        User.id, User.telegram_id, User.coins, User.created_at]
+        User.telegram_id, User.coins, User.coin_slots,
+        User.created_at]
     name = "пользователя"
     name_plural = "Пользователи"
-    column_labels = get_column_comments(User)
+    column_labels = {**get_column_comments(User), **{
+        "coins": "Монеты",
+        "coin_slots": "Слоты монет",
+    }}
 
 
 class CoinAdmin(ModelView, model=Coin):
     column_list = [
-        Coin.id, Coin.name, Coin.user_id, Coin.cycle, Coin.created_at]
+        Coin.name, Coin.user_id, Coin.cycle, Coin.created_at]
     name = "монету"
     name_plural = "Монеты"
     column_labels = get_column_comments(Coin)
+
+
+class CoinSlotAdmin(ModelView, model=CoinSlot):
+    column_list = [
+        "user.telegram_id", CoinSlot.end_date, CoinSlot.created_at]
+    name = "слот монеты"
+    name_plural = "Слоты монет"
+    column_labels = get_column_comments(CoinSlot)
 
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")

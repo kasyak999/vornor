@@ -28,7 +28,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """Создать новый объект."""
         obj_in_data = obj_in.model_dump()
 
-        if obj_in_data["password"] is not None:
+        if obj_in_data.get('password'):
             obj_in_data["password"] = pwd_context.hash(obj_in_data["password"])
 
         db_obj = self.model(**obj_in_data)
