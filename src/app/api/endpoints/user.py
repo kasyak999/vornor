@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta
 from app.core.db import get_async_session
 from app.crud import user_crud, coinslot_crud
-from app.schemas.user import UserCreate, UserToken, UserDB
+from app.schemas.user import UserCreate, UserToken, UserDB, UserUpdate, UserAllDB
 from app.api.validators import check_user, check_not_user
 from app.models import User
 from app.services.user import get_current_user
@@ -15,7 +15,7 @@ router = APIRouter(prefix='/user', tags=['Работа с пользовател
 
 @router.get(
     "/me",
-    response_model=UserDB,
+    response_model=UserAllDB,
     summary='Личный кабинет',
 )
 async def get_me(
@@ -23,7 +23,7 @@ async def get_me(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Получение информации о пользователе."""
-    return await user_crud.get_user_by_telegram_id(token, session)
+    return await user_crud.get_user_all(token, session)
 
 
 @router.post(
@@ -56,6 +56,22 @@ async def post_token(
     """Токен для зарегистрированного пользователя."""
     user = await user_crud.get_user_by_telegram_id(
         telegram_id, session)
+    print(user.id)
     await check_not_user(user)
-    token = await user_crud.authenticate_user(telegram_id)
+    token = await user_crud.authenticate_user(user.id)
     return {"access_token": token, "token_type": "bearer"}
+
+
+@router.patch(
+    "/me",
+    response_model=UserDB,
+    summary='Обновление данных пользователя',
+)
+async def patch_me(
+    obj_in: UserUpdate,
+    token: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session),
+):
+    """Получение информации о пользователе."""
+    user = await user_crud.get_id(token, session)
+    return await user_crud.update(user, obj_in, session)
