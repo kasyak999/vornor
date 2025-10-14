@@ -2,7 +2,6 @@ from sqlalchemy import String, Float, Boolean, ForeignKey, Integer
 from app.core.db import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import UniqueConstraint
-from app.models import User
 
 
 class Coin(Base):
