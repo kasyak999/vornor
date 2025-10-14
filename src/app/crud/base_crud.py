@@ -1,14 +1,11 @@
-from typing import Generic, Optional, Type, TypeVar
+from typing import Generic, Type, TypeVar
 
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.core.db import Base
-from passlib.context import CryptContext
 from fastapi.encoders import jsonable_encoder
 
-
-# pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 ModelType = TypeVar('ModelType', bound=Base)
 CreateSchemaType = TypeVar('CreateSchemaType', bound=BaseModel)

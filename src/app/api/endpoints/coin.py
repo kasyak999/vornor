@@ -3,13 +3,13 @@ from fastapi import Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import get_async_session
-from app.models import User, Coin
+from app.models import User
 from app.services.user import get_current_user
 from app.schemas.coin import CoinCreate, CoinDB, CoinUpdate
 from app.crud import coin_crud, user_crud
 from app.api.validators import (
     check_coin_user, check_slot_and_coin, check_not_coin_user)
-from typing import List
+
 
 # Создаем главный роутер для API
 router = APIRouter(prefix='/coin', tags=['Работа с монетой'])
