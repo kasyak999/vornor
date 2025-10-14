@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime, timedelta
 from app.core.db import get_async_session
 from app.crud import user_crud, coinslot_crud
 from app.schemas.user import UserCreate, UserToken, UserDB, UserUpdate, UserAllDB
