@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, field_validator
 from typing import Optional, List
 from passlib.context import CryptContext
 from .coinslot import CoinSlotData
-from .coin import CoinDate
+from .coin import CoinDB
 
 
 class UserCreate(BaseModel):
@@ -34,7 +34,7 @@ class UserDB(BaseModel):
 
 class UserAllDB(UserDB):
     coin_slots: List[CoinSlotData] = []
-    coins: List[CoinDate] = []
+    coins: List[CoinDB] = []
 
 
 class UserUpdate(BaseModel):

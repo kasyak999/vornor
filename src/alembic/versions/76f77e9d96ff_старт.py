@@ -1,8 +1,8 @@
-"""coin
+"""старт
 
-Revision ID: f92f29043648
+Revision ID: 76f77e9d96ff
 Revises: 
-Create Date: 2025-10-09 23:00:52.170208
+Create Date: 2025-10-14 22:09:45.978060
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'f92f29043648'
+revision: str = '76f77e9d96ff'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -33,12 +33,13 @@ def upgrade() -> None:
     )
     op.create_table('coin',
     sa.Column('name', sa.String(length=50), nullable=False, comment='Название монеты'),
-    sa.Column('buy_usdt', sa.String(length=50), nullable=True, comment='На сколько USDT покупать монету если стоит в цикле'),
+    sa.Column('buy_usdt', sa.Float(), nullable=True, comment='На сколько USDT покупать монету если стоит в цикле'),
     sa.Column('cycle', sa.Boolean(), nullable=False, comment='Зацикливание монеты true / false на покупку и продажу'),
     sa.Column('price_buy', sa.Float(), nullable=True, comment='Курс первой покупки монеты'),
     sa.Column('last_price_buy', sa.Float(), nullable=True, comment='Курс последней покупки монеты'),
     sa.Column('order_buy_id', sa.Integer(), nullable=True, comment='ID ордера на покупку'),
     sa.Column('order_sell_id', sa.Integer(), nullable=True, comment='ID ордера на продажу'),
+    sa.Column('count_buy', sa.Integer(), nullable=False, comment='Количество покупок монеты'),
     sa.Column('user_id', sa.Integer(), nullable=False, comment='ID пользователя'),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False, comment='Дата создания'),
@@ -47,9 +48,8 @@ def upgrade() -> None:
     sa.UniqueConstraint('user_id', 'name', name='uq_user_coin_name')
     )
     op.create_table('coinslot',
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('start_date', sa.DateTime(), nullable=False),
-    sa.Column('end_date', sa.DateTime(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=False, comment='ID пользователя'),
+    sa.Column('end_date', sa.DateTime(), nullable=True, comment='Дата окончания слота'),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False, comment='Дата создания'),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ondelete='CASCADE'),

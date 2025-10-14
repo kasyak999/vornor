@@ -16,10 +16,11 @@ class Coin(Base):
         nullable=False,
         comment='Название монеты',
     )
-    buy_usdt: Mapped[str] = mapped_column(
-        String(50),
+    buy_usdt: Mapped[Float] = mapped_column(
+        Float,
         nullable=True,
         comment='На сколько USDT покупать монету если стоит в цикле',
+        default=5.5
     )
     cycle: Mapped[bool] = mapped_column(
         Boolean,
@@ -45,6 +46,11 @@ class Coin(Base):
         Integer,
         nullable=True,
         comment='ID ордера на продажу',
+    )
+    count_buy: Mapped[int] = mapped_column(
+        Integer,
+        default=6,
+        comment='Количество покупок монеты',
     )
     user_id: Mapped[int] = mapped_column(
         ForeignKey('user.id', ondelete='CASCADE', name='fk_coin_user_id'),

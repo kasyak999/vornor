@@ -20,11 +20,19 @@ async def check_not_user(user: User | None) -> None:
 
 
 async def check_coin_user(result: Coin | None) -> None:
-    """Проверка монеты на существование у пользователя"""
+    """Проверка на дубли монет у пользователя"""
     if result is not None:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail="Такая монета уже есть")
+
+
+async def check_not_coin_user(result: Coin | None) -> None:
+    """Проверка монеты на существование у пользователя"""
+    if result is None:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Такой монеты нет")
 
 
 async def check_slot_and_coin(slots: list, coins: list) -> None:

@@ -13,19 +13,6 @@ from app.schemas.coinslot import CoinSlotCreate
 router = APIRouter(prefix='/user', tags=['Работа с пользователем'])
 
 
-@router.get(
-    "/me",
-    response_model=UserAllDB,
-    summary='Личный кабинет',
-)
-async def get_me(
-    token: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_async_session),
-):
-    """Получение информации о пользователе."""
-    return await user_crud.get_user_all(token, session)
-
-
 @router.post(
     "/register",
     summary='Регистрация',
@@ -56,14 +43,27 @@ async def post_token(
     """Токен для зарегистрированного пользователя."""
     user = await user_crud.get_user_by_telegram_id(
         telegram_id, session)
-    print(user.id)
     await check_not_user(user)
     token = await user_crud.authenticate_user(user.id)
     return {"access_token": token, "token_type": "bearer"}
 
 
+@router.get(
+    "/",
+    response_model=UserAllDB,
+    summary='Личный кабинет',
+    response_model_exclude_none=True
+)
+async def get_me(
+    token: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session),
+):
+    """Получение информации о пользователе."""
+    return await user_crud.get_user_all(token, session)
+
+
 @router.patch(
-    "/me",
+    "/",
     response_model=UserDB,
     summary='Обновление данных пользователя',
 )
