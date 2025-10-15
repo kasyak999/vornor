@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 from typing import Optional, List
 from passlib.context import CryptContext
 from .coinslot import CoinSlotData
@@ -30,6 +30,7 @@ class UserDB(BaseModel):
     id: int
     telegram_id: int
     api_key: Optional[str] = None
+    api_secret: Optional[str] = None
 
 
 class UserAllDB(UserDB):
@@ -39,13 +40,14 @@ class UserAllDB(UserDB):
 
 class UserUpdate(BaseModel):
     """Обновление пользователя."""
-    api_key: Optional[str] = None
+    api_key: str
+    api_secret: str
 
     model_config = ConfigDict(extra='forbid')
 
-    @field_validator('api_key')
-    @classmethod
-    def validate_api_key(cls, api_key: str) -> str:
-        """Валидация пароля."""
-        print(api_key)
-        return api_key
+    # @model_validator(mode='after')
+    # def validate_keys_together(self) -> "UserUpdate":
+    #     """Синхронная валидация (асинхронное вынести наружу)."""
+    #     if self.api_key and not self.api_secret:
+    #         raise ValueError("api_secret и api_key должны быть указаны.")
+    #     return self

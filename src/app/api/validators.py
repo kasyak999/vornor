@@ -45,7 +45,7 @@ async def check_slot_and_coin(slots: list, coins: list) -> None:
 
 async def check_has_api_key(user: User) -> None:
     """Проверка наличия API ключа у пользователя"""
-    if not user.api_key:
+    if not user.api_key or not user.api_secret:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail="Не установлен API ключ")
+            detail="Не установлен API ключ или API секрет")

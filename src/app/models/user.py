@@ -24,6 +24,14 @@ class User(Base):
         nullable=True,
         comment='API key от биржи',
     )
+    api_secret: Mapped[str] = mapped_column(
+        nullable=True,
+        comment='API secret от биржи',
+    )
+    demo: Mapped[bool] = mapped_column(
+        nullable=True,
+        comment='Использование демо счета',
+    )
     coins: Mapped[list["Coin"]] = relationship(
         "Coin",
         back_populates="user",
