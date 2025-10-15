@@ -8,7 +8,8 @@ from app.services.user import get_current_user
 from app.schemas.coin import CoinCreate, CoinDB, CoinUpdate
 from app.crud import coin_crud, user_crud
 from app.api.validators import (
-    check_coin_user, check_slot_and_coin, check_not_coin_user)
+    check_coin_user, check_slot_and_coin, check_not_coin_user,
+    check_has_api_key)
 
 
 # Создаем главный роутер для API
@@ -28,7 +29,8 @@ async def post_coin(
 ):
     """Добавление новой монеты для пользователя."""
     user = await user_crud.get_user_all(token, session)
-
+    # Проверяем есть ли api ключ у пользователя
+    await check_has_api_key(user)
     # Проверяем есть ли у пользователя слоты для добавления монеты
     await check_slot_and_coin(user.coin_slots, user.coins)
 

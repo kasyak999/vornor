@@ -41,3 +41,11 @@ async def check_slot_and_coin(slots: list, coins: list) -> None:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail="Недостаточно слотов для добавления монеты")
+
+
+async def check_has_api_key(user: User) -> None:
+    """Проверка наличия API ключа у пользователя"""
+    if not user.api_key:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Не установлен API ключ")

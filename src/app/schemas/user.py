@@ -42,3 +42,10 @@ class UserUpdate(BaseModel):
     api_key: Optional[str] = None
 
     model_config = ConfigDict(extra='forbid')
+
+    @field_validator('api_key')
+    @classmethod
+    def validate_api_key(cls, api_key: str) -> str:
+        """Валидация пароля."""
+        print(api_key)
+        return api_key
