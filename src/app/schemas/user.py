@@ -31,6 +31,7 @@ class UserDB(BaseModel):
     telegram_id: int
     api_key: Optional[str] = None
     api_secret: Optional[str] = None
+    demo: Optional[bool] = None
 
 
 class UserAllDB(UserDB):
@@ -42,6 +43,7 @@ class UserUpdate(BaseModel):
     """Обновление пользователя."""
     api_key: str
     api_secret: str
+    demo: Optional[bool] = None
 
     model_config = ConfigDict(extra='forbid')
 

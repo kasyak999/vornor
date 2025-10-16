@@ -75,7 +75,6 @@ async def patch_me(
 ):
     """Получение информации о пользователе."""
     user = await user_crud.get_id(token, session)
-    qwe = await validate_bybit_keys(obj_in.api_key, obj_in.api_secret)
-    print(qwe)
-    # добавить схему demo обновить миграции
+    obj_in.demo = await validate_bybit_keys(obj_in.api_key, obj_in.api_secret)
+    print(obj_in)
     return await user_crud.update(user, obj_in, session)

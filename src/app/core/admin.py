@@ -22,7 +22,7 @@ def get_column_comments(model):
 class UserAdmin(ModelView, model=User):
     column_list = [
         User.telegram_id, User.coins, User.coin_slots,
-        User.created_at]
+        User.demo, User.created_at]
     name = "пользователя"
     name_plural = "Пользователи"
     column_labels = {**get_column_comments(User), **{

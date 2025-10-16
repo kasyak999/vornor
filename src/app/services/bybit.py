@@ -15,7 +15,7 @@ def bybit_session(api_key: str, api_secret: str, demo=False) -> HTTP:
     )
 
 
-async def validate_bybit_keys(api_key: str, api_secret: str) -> str:
+async def validate_bybit_keys(api_key: str, api_secret: str) -> bool:
     """Проверка валидности API ключей Bybit."""
     networks = [
         ("real", False),
@@ -27,7 +27,7 @@ async def validate_bybit_keys(api_key: str, api_secret: str) -> str:
             session = bybit_session(api_key, api_secret, demo=demo_mode)
             result = await run_in_threadpool(session.get_api_key_information)
             if result.get("retCode") == 0:
-                return network_name
+                return demo_mode
         except InvalidRequestError as e:
             if "10003" not in str(e):
                 raise HTTPException(
