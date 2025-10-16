@@ -1,4 +1,5 @@
-from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from pydantic import (
+    BaseModel, ConfigDict, field_validator, model_validator, computed_field)
 from typing import Optional, List
 from passlib.context import CryptContext
 from .coinslot import CoinSlotData
@@ -37,6 +38,11 @@ class UserDB(BaseModel):
 class UserAllDB(UserDB):
     coin_slots: List[CoinSlotData] = []
     coins: List[CoinDB] = []
+
+    @computed_field
+    def count_clots(self) -> int:
+        """Возвращает количество слотов."""
+        return len(self.coin_slots)
 
 
 class UserUpdate(BaseModel):
