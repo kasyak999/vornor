@@ -35,9 +35,11 @@ async def check_not_coin_user(result: Coin | None) -> None:
             detail="Такой монеты нет")
 
 
-async def check_slot_and_coin(slots: list, coins: list) -> None:
+async def check_slot_and_coin(user: User) -> None:
     """Проверка слотов и монет у пользователя"""
-    if len(coins) >= len(slots):
+    if user.demo:
+        return
+    if len(user.coins) >= len(user.coin_slots):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail="Недостаточно слотов для добавления монеты")

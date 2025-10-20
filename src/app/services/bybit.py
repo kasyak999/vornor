@@ -29,11 +29,20 @@ async def validate_bybit_keys(api_key: str, api_secret: str) -> bool:
             if result.get("retCode") == 0:
                 return demo_mode
         except InvalidRequestError as e:
-            if "10003" not in str(e):
+            if "10003" in str(e):
+                continue
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail=f"Ошибка проверки ключей ({network_name}): {e}"
+            ) from e
+        except Exception as e:
+            # Обработка Retryable error
+            if "Retryable error occurred" in str(e):
                 raise HTTPException(
-                    status_code=HTTPStatus.BAD_REQUEST,
-                    detail=f"Ошибка проверки ключей {network_name}: {e}"
+                    status_code=HTTPStatus.SERVICE_UNAVAILABLE,
+                    detail=f"Bybit временно недоступен ({network_name}): попробуйте позже"
                 ) from e
+            raise  # другие ошибки пусть поднимаются как есть
 
     raise HTTPException(
         status_code=HTTPStatus.BAD_REQUEST,

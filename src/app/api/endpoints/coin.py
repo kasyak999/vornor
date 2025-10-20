@@ -32,7 +32,7 @@ async def post_coin(
     # Проверяем есть ли api ключ у пользователя
     await check_has_api_key(user)
     # Проверяем есть ли у пользователя слоты для добавления монеты
-    await check_slot_and_coin(user.coin_slots, user.coins)
+    await check_slot_and_coin(user)
 
     # Проверяем, что монета с таким именем у пользователя еще не существует
     result_coin = await coin_crud.get_coin_by_name_and_user(

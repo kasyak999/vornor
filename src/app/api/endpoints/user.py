@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import get_async_session
-from app.crud import user_crud, coinslot_crud
+from app.crud import user_crud, coinslot_crud, coin_crud
 from app.schemas.user import (
     UserCreate, UserToken, UserDB, UserUpdate, UserAllDB)
 from app.api.validators import check_user, check_not_user
@@ -73,8 +73,8 @@ async def patch_me(
     token: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Получение информации о пользователе."""
-    user = await user_crud.get_id(token, session)
+    """Обновление данных пользователя."""
+    user = await user_crud.get_user_all(token, session)
     obj_in.demo = await validate_bybit_keys(obj_in.api_key, obj_in.api_secret)
-    print(obj_in)
+    user.coins.clear()
     return await user_crud.update(user, obj_in, session)
