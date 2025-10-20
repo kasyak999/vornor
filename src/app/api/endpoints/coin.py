@@ -10,6 +10,7 @@ from app.crud import coin_crud, user_crud
 from app.api.validators import (
     check_coin_user, check_slot_and_coin, check_not_coin_user,
     check_has_api_key)
+from app.services.bybit import get_info_coin
 
 
 # Создаем главный роутер для API
@@ -35,11 +36,13 @@ async def post_coin(
     await check_slot_and_coin(user)
 
     # Проверяем, что монета с таким именем у пользователя еще не существует
-    result_coin = await coin_crud.get_coin_by_name_and_user(
+    result_coin = await coin_crud.get_coin_user(
         coin_add.name, user.id, session)
     await check_coin_user(result_coin)
-
     coin_add.user_id = user.id
+    coin_add.name = coin_add.name.upper()
+    # Проверка монеты на Bybit
+    await get_info_coin(user, coin_add.name)
     return await coin_crud.create(coin_add, session)
 
 
@@ -55,10 +58,9 @@ async def delete_coin(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Удаление монеты по ID."""
-    user_coins = await coin_crud.all_coins_id_user(token, session)
-    coin = next((c for c in user_coins if c.id == coin_id), None)
-    await check_not_coin_user(coin)
-    return await coin_crud.remove(coin, session)
+    user_coins = await coin_crud.get_id(coin_id, session)
+    await check_not_coin_user(user_coins, token)
+    return await coin_crud.remove(user_coins, session)
 
 
 @router.patch(
@@ -73,9 +75,8 @@ async def patch_coin(
         token: User = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session),
 ):
-    """Удаление монеты по ID."""
-    user_coins = await coin_crud.all_coins_id_user(token, session)
-    coin = next((c for c in user_coins if c.id == coin_id), None)
-    await check_not_coin_user(coin)
+    """Изменение монеты."""
+    user_coins = await coin_crud.get_id(coin_id, session)
+    await check_not_coin_user(user_coins, token)
 
-    return await coin_crud.update(coin, coin_edit, session)
+    return await coin_crud.update(user_coins, coin_edit, session)

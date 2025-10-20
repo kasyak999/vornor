@@ -27,9 +27,9 @@ async def check_coin_user(result: Coin | None) -> None:
             detail="Такая монета уже есть")
 
 
-async def check_not_coin_user(result: Coin | None) -> None:
+async def check_not_coin_user(result: Coin | None, user_id: int) -> None:
     """Проверка монеты на существование у пользователя"""
-    if result is None:
+    if result is None or result.user_id != user_id:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail="Такой монеты нет")

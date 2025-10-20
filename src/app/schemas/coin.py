@@ -11,8 +11,7 @@ class CoinCreate(BaseModel):
 
 
 class CoinUpdate(BaseModel):
-    """Создание монету."""
-    name: Optional[str] = None
+    """Изменить монету."""
     buy_usdt: Optional[float] = None
     cycle: Optional[bool] = False
     price_buy: Optional[float] = None
