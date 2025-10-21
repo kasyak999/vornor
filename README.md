@@ -9,3 +9,8 @@ uvicorn app.main:app --reload
 ruff check
 ruff check --fix
 ```
+
+
+celery -A app.core.celery_worker worker --loglevel=info
+
+celery -A app.core.celery_worker beat --loglevel=info

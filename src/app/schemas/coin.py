@@ -23,3 +23,4 @@ class CoinUpdate(BaseModel):
 class CoinDB(CoinUpdate):
     """Информация о монете."""
     id: int
+    name: str
