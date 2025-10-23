@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from http import HTTPStatus
 from app.models import User, Coin
+from app.schemas.coin import CoinUpdate
 
 
 async def check_user(user: User | None) -> None:
@@ -51,3 +52,12 @@ async def check_has_api_key(user: User) -> None:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail="Не установлен API ключ или API секрет")
+
+
+async def validate_start_coin(coin: Coin, coin_update: CoinUpdate) -> None:
+    """Валидация при старте монеты"""
+    price = coin_update.price_buy or coin.price_buy
+    if coin_update.start and price is None:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Для запуска монеты необходимо указать price_buy.")

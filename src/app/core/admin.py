@@ -33,7 +33,7 @@ class UserAdmin(ModelView, model=User):
 
 class CoinAdmin(ModelView, model=Coin):
     column_list = [
-        Coin.name, Coin.user_id, Coin.cycle, Coin.created_at]
+        Coin.name, Coin.user_id, Coin.cycle, Coin.start, Coin.created_at]
     name = "монету"
     name_plural = "Монеты"
     column_labels = get_column_comments(Coin)

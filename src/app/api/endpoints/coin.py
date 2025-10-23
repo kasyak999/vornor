@@ -9,7 +9,7 @@ from app.schemas.coin import CoinCreate, CoinDB, CoinUpdate
 from app.crud import coin_crud, user_crud
 from app.api.validators import (
     check_coin_user, check_slot_and_coin, check_not_coin_user,
-    check_has_api_key)
+    check_has_api_key, validate_start_coin)
 from app.services.bybit import get_info_coin
 
 
@@ -34,13 +34,12 @@ async def post_coin(
     await check_has_api_key(user)
     # Проверяем есть ли у пользователя слоты для добавления монеты
     await check_slot_and_coin(user)
-
+    coin_add.name = coin_add.name.upper()
     # Проверяем, что монета с таким именем у пользователя еще не существует
     result_coin = await coin_crud.get_coin_user(
         coin_add.name, user.id, session)
     await check_coin_user(result_coin)
     coin_add.user_id = user.id
-    coin_add.name = coin_add.name.upper()
     # Проверка монеты на Bybit
     await get_info_coin(user, coin_add.name)
     return await coin_crud.create(coin_add, session)
@@ -78,5 +77,5 @@ async def patch_coin(
     """Изменение монеты."""
     user_coins = await coin_crud.get_id(coin_id, session)
     await check_not_coin_user(user_coins, token)
-
+    await validate_start_coin(user_coins, coin_edit)
     return await coin_crud.update(user_coins, coin_edit, session)
