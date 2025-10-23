@@ -53,13 +53,18 @@ pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 class AdminAuth(AuthenticationBackend):
     async def login(self, request: Request) -> bool:
         form = await request.form()
-        telegram_id, hashed_password = form["username"], form["password"]
+        telegram_id = form.get('username')
+        hashed_password = form.get('password')
+
+        try:
+            telegram_id = int(telegram_id)
+        except (TypeError, ValueError):
+            return False
 
         async with AsyncSession(engine) as session:
             result = await session.execute(select(User).where(
-                User.telegram_id == int(telegram_id)))
+                User.telegram_id == telegram_id))
             user = result.scalar_one_or_none()
-
         if not user:
             return False
         if not pwd_context.verify(hashed_password, user.password):

@@ -87,7 +87,6 @@ async def ping_celery() -> dict:
     try:
         tasks.test_task.apply_async()  # Отправляем задачу в очередь
         tasks.test_task2.apply_async(countdown=5)  # запуск через 5 секунд
-        tasks.test_task.apply_async(countdown=60)
         return {"message": "Если нет ошибки все ок"}
     except Exception as e:
         return {"error": str(e)}

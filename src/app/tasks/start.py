@@ -7,14 +7,14 @@ from app.core.celery_worker import celery_app
 def test_task():
     """Отправка уведомления."""
     print('qwe')
-    return "ok"
+    return "ok 1"
 
 
 @shared_task(name='Тестовая задача 2')
 def test_task2():
     """Отправка уведомления."""
     print('запускается через 5 секунд')
-    return "ok"
+    return "ok 2"
 
 
 @celery_app.task(name="app.tasks.say_hello")
