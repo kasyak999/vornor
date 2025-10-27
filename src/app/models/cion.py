@@ -62,6 +62,11 @@ class Coin(Base):
         default=False,
         comment='Запущена ли монета на торговлю',
     )
+    buy: Mapped[int] = mapped_column(
+        Integer,
+        default=1,
+        comment='Количество закупок',
+    )
     user: Mapped["User"] = relationship("User", back_populates="coins")
 
     def __repr__(self) -> str:

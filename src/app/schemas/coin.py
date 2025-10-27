@@ -2,6 +2,16 @@ from pydantic import BaseModel, ConfigDict, field_validator
 from typing import Optional
 
 
+class CoinBase(BaseModel):
+    """Базовый класс"""
+    buy_usdt: Optional[float] = None
+    cycle: Optional[bool] = False
+    price_buy: Optional[float] = None
+    count_buy: Optional[int] = None
+    buy: Optional[int] = None
+    start: Optional[bool] = False
+
+
 class CoinCreate(BaseModel):
     """Создание монету."""
     name: str
@@ -10,14 +20,8 @@ class CoinCreate(BaseModel):
     model_config = ConfigDict(extra='forbid')
 
 
-class CoinUpdate(BaseModel):
+class CoinUpdate(CoinBase):
     """Изменить монету."""
-    buy_usdt: Optional[float] = None
-    cycle: Optional[bool] = False
-    price_buy: Optional[float] = None
-    count_buy: Optional[int] = None
-    start: Optional[bool] = False
-
     model_config = ConfigDict(extra='forbid')
 
     @field_validator('price_buy')
@@ -46,12 +50,7 @@ class CoinUpdate(BaseModel):
         return count_buy
 
 
-class CoinDB(BaseModel):
+class CoinDB(CoinBase):
     """Информация о монете."""
     id: int
     name: str
-    buy_usdt: Optional[float] = None
-    cycle: Optional[bool] = False
-    price_buy: Optional[float] = None
-    count_buy: Optional[int] = None
-    start: Optional[bool] = False
