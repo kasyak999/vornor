@@ -1,6 +1,4 @@
 from celery import shared_task
-from app.core.config import settings
-from app.core.celery_worker import celery_app
 
 
 @shared_task(name='Тестовая задача')
@@ -17,6 +15,31 @@ def test_task2():
     return "ok 2"
 
 
-@celery_app.task(name="app.tasks.say_hello")
-def say_hello():
-    print("Привет! Задача сработала через Celery Beat.")
+from app.models import Coin
+from sqlalchemy import select
+from app.core.db import AsyncSessionLocal
+import asyncio
+from asgiref.sync import async_to_sync
+
+
+@shared_task(name='start_task')
+def start_task():
+    """
+    Осуществляется поиск монет в базе данных у которых стоит
+    флаг start=True
+    """
+    print('Добавление новых задач в очередь')
+    # tasks.new_task.apply_async()
+    
+    async def get_coins():
+        async with AsyncSessionLocal() as session:
+            result = await session.execute(select(Coin).where(
+                Coin.start == True))
+            return result.scalars().all()
+        
+    # result = asyncio.run(get_coins())  # запускаем async функцию синхронно
+    result = async_to_sync(get_coins)()  # запускаем async функцию синхронно
+    print(result)
+
+
+

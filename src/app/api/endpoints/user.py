@@ -85,8 +85,8 @@ async def patch_me(
 async def ping_celery() -> dict:
     """Проверка работы Celery."""
     try:
-        tasks.test_task.apply_async()  # Отправляем задачу в очередь
-        tasks.test_task2.apply_async(countdown=5)  # запуск через 5 секунд
+        tasks.start_task.apply_async()  # Отправляем задачу в очередь
+        # tasks.test_task2.apply_async(countdown=5)  # запуск через 5 секунд
         return {"message": "Если нет ошибки все ок"}
     except Exception as e:
         return {"error": str(e)}
