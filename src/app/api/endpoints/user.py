@@ -9,7 +9,6 @@ from app.models import User
 from app.services.user import get_current_user
 from app.schemas.coinslot import CoinSlotCreate
 from app.services.bybit import validate_bybit_keys
-import app.tasks as tasks
 
 
 router = APIRouter(prefix='/user', tags=['Работа с пользователем'])
@@ -81,12 +80,12 @@ async def patch_me(
     return await user_crud.update(user, obj_in, session)
 
 
-@router.get("/ping_celery", summary="Проверка Celery")
-async def ping_celery() -> dict:
-    """Проверка работы Celery."""
-    try:
-        tasks.start_task.apply_async()  # Отправляем задачу в очередь
-        # tasks.test_task2.apply_async(countdown=5)  # запуск через 5 секунд
-        return {"message": "Если нет ошибки все ок"}
-    except Exception as e:
-        return {"error": str(e)}
+# @router.get("/ping_celery", summary="Проверка Celery")
+# async def ping_celery() -> dict:
+#     """Проверка работы Celery."""
+#     try:
+#         tasks.start_task.apply_async()  # Отправляем задачу в очередь
+#         # tasks.test_task2.apply_async(countdown=5)  # запуск через 5 секунд
+#         return {"message": "Если нет ошибки все ок"}
+#     except Exception as e:
+#         return {"error": str(e)}

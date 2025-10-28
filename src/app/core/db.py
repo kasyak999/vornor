@@ -1,4 +1,4 @@
-from sqlalchemy import DateTime
+from sqlalchemy import DateTime, create_engine
 # from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from datetime import datetime
 from sqlalchemy.orm import (
@@ -34,3 +34,6 @@ AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 async def get_async_session():
     async with AsyncSessionLocal() as async_session:
         yield async_session
+
+# Синхронный движок для задач Celery
+sync_engine = create_engine(settings.database_url.replace("+asyncpg", ""))

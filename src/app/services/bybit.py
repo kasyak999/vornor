@@ -5,6 +5,7 @@ from pprint import pprint
 from starlette.concurrency import run_in_threadpool
 from pybit.exceptions import InvalidRequestError
 from app.models import User
+import decimal
 
 
 async def bybit_session(api_key: str, api_secret: str, demo=False) -> HTTP:
@@ -89,20 +90,19 @@ async def get_info_coin(user: User, symbol: str):
     session = await bybit_session(user.api_key, user.api_secret, user.demo)
     try:
         result = await run_in_threadpool(
-            session.get_tickers, category="spot", symbol=symbol)
-        tickers = result.get("result", {}).get("list", [])
-        if not tickers:
+            session.get_instruments_info, category="spot", symbol=symbol)
+        result = result.get("result", {}).get("list", [])
+        if not result:
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail=f"Монета {symbol} не найдена"
             )
-        return tickers[0]
+        
+        znak_price = result[0]["priceFilter"]['tickSize']
+        znak_price = abs(decimal.Decimal(str(znak_price)).as_tuple().exponent)
+        result[0]['znak_price'] = znak_price
+        return result[0]
     except InvalidRequestError as e:
-        if "10001" in str(e):
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
-                detail=f"Такой монеты нет: {symbol}"
-            ) from e
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail=f"Ошибка запроса к Bybit: {e}"
@@ -152,3 +152,35 @@ async def bybit_coin_balance(user: User, coin: str) -> dict:
         status_code=HTTPStatus.BAD_REQUEST,
         detail=f"Монеты {coin} нет в портфеле."
     )
+
+
+async def add_coin_order(
+    user: User,
+    symbol: str,
+    qty,
+    price,
+    side: str,
+):
+    """ Создать лимитный ордер """
+
+    session = await bybit_session(
+        user.api_key,
+        user.api_secret,
+        user.demo
+    )
+
+    try:
+        await run_in_threadpool(
+            session.place_order,
+            category="spot",  # спотовый рынок
+            symbol=symbol,  # торговая пара
+            side=side,  # "Buy" или "Sell"
+            orderType="Limit",  # лимитный ордер
+            qty=qty,  # количество базовой валюты
+            price=price,  # цена лимитного ордера
+        )
+    except InvalidRequestError as e:
+        print(
+            f'{symbol}: {side} Ошибка API при создании ордера: {str(e)}')
+    else:
+        print(f'✅ {symbol}: {side} ордер создан')
