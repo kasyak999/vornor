@@ -5,7 +5,7 @@ from pprint import pprint
 from starlette.concurrency import run_in_threadpool
 from pybit.exceptions import InvalidRequestError
 from app.models import User
-import decimal
+from decimal import Decimal, ROUND_DOWN
 
 
 async def bybit_session(api_key: str, api_secret: str, demo=False) -> HTTP:
@@ -97,10 +97,15 @@ async def get_info_coin(user: User, symbol: str):
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail=f"Монета {symbol} не найдена"
             )
-        
+
         znak_price = result[0]["priceFilter"]['tickSize']
-        znak_price = abs(decimal.Decimal(str(znak_price)).as_tuple().exponent)
+        znak_price = abs(Decimal(str(znak_price)).as_tuple().exponent)
         result[0]['znak_price'] = znak_price
+
+        base_precision = result[0]["lotSizeFilter"]["basePrecision"]
+        base_precision = abs(Decimal(str(base_precision)).as_tuple().exponent)
+        result[0]['base_precision'] = base_precision
+
         return result[0]
     except InvalidRequestError as e:
         raise HTTPException(
@@ -180,7 +185,15 @@ async def add_coin_order(
             price=price,  # цена лимитного ордера
         )
     except InvalidRequestError as e:
-        print(
+        return (
             f'{symbol}: {side} Ошибка API при создании ордера: {str(e)}')
     else:
-        print(f'✅ {symbol}: {side} ордер создан')
+        return f'✅ {symbol}: {side} ордер создан'
+
+
+def round_down(balance: Decimal, base_precision: int) -> Decimal:
+    """
+    Округляет вниз до заданного количества знаков после запятой.
+    """
+    quantize_value = Decimal(f"1e-{base_precision}")
+    return balance.quantize(quantize_value, rounding=ROUND_DOWN)
