@@ -51,6 +51,8 @@ def coin_orders_task(coin_id: int):
         min_order_qty = Decimal(str(ticker['lotSizeFilter']['minOrderQty']))
 
         if balance < min_order_qty:
+            coin.start = False
+            session.commit()
             return (
                 f"Недостаточно средств для ордера {coin.name}: "
                 f"баланс={balance}, "
@@ -81,3 +83,4 @@ def coin_orders_task(coin_id: int):
 
         return sell_order, buy_order
 
+    # Создать новую задачу и записать ид ордеров в базу данных

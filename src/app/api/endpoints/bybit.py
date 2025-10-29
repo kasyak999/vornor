@@ -4,7 +4,8 @@ from app.core.db import get_async_session
 from app.crud import user_crud
 from app.models import User
 from app.services.user import get_current_user
-from app.services.bybit import bybit_balance, bybit_coin_balance, get_info_coin
+from app.services.bybit import (
+    bybit_balance, bybit_coin_balance, get_info_coin, list_orders)
 
 
 router = APIRouter(prefix='/bybit', tags=['Работа с bybit'])
@@ -122,3 +123,19 @@ async def get_coin_info(
     user = await user_crud.get_id(token, session)
     coin_name = coin_name.upper()
     return await get_info_coin(user, coin_name)
+
+
+@router.get(
+    "/order/{coin_name}",
+    summary='Получить открытые ордера по монете',
+    response_model=list,
+)
+async def get_coin_order(
+    coin_name: str,
+    token: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session),
+):
+    """"Получить открытые ордера по монете на Bybit."""
+    user = await user_crud.get_id(token, session)
+    coin_name = coin_name.upper()
+    return await list_orders(user, coin_name)

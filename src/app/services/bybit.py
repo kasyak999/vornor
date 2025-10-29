@@ -197,3 +197,23 @@ def round_down(balance: Decimal, base_precision: int) -> Decimal:
     """
     quantize_value = Decimal(f"1e-{base_precision}")
     return balance.quantize(quantize_value, rounding=ROUND_DOWN)
+
+
+async def list_orders(user: User, symbol: str):
+    """ Список ордеров """
+    symbol = symbol + "USDT"
+    session = await bybit_session(
+        user.api_key,
+        user.api_secret,
+        user.demo
+    )
+
+    orders = await run_in_threadpool(
+        session.get_open_orders, category="spot", symbol=symbol)
+    orders = orders.get("result", {}).get("list", [])
+    result = []
+    for coin in orders:
+        result.append({
+            coin['side']: int(coin['orderId']),
+        })
+    return result
