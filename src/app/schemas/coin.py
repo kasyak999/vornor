@@ -8,7 +8,6 @@ class CoinBase(BaseModel):
     cycle: Optional[bool] = False
     price_buy: Optional[float] = None
     count_buy: Optional[int] = None
-    buy: Optional[int] = None
     start: Optional[bool] = False
 
 
@@ -54,3 +53,4 @@ class CoinDB(CoinBase):
     """Информация о монете."""
     id: int
     name: str
+    buy: int

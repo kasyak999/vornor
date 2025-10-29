@@ -1,8 +1,8 @@
-"""start
+"""coin
 
-Revision ID: c8c7b664a88c
+Revision ID: f9136c66d172
 Revises: 
-Create Date: 2025-10-16 22:15:12.379580
+Create Date: 2025-10-29 20:57:44.758318
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'c8c7b664a88c'
+revision: str = 'f9136c66d172'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -43,6 +43,8 @@ def upgrade() -> None:
     sa.Column('order_sell_id', sa.Integer(), nullable=True, comment='ID ордера на продажу'),
     sa.Column('count_buy', sa.Integer(), nullable=False, comment='Количество покупок монеты'),
     sa.Column('user_id', sa.Integer(), nullable=False, comment='ID пользователя'),
+    sa.Column('start', sa.Boolean(), nullable=False, comment='Запущена ли монета на торговлю'),
+    sa.Column('buy', sa.Integer(), nullable=False, comment='Количество закупок'),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False, comment='Дата создания'),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], name='fk_coin_user_id', ondelete='CASCADE'),
