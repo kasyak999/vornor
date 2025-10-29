@@ -80,7 +80,5 @@ def coin_orders_task(coin_id: int):
             price=buy_price,
             side='Buy'
         )
-
+        # Создать новую задачу и записать ид ордеров в базу данных
         return sell_order, buy_order
-
-    # Создать новую задачу и записать ид ордеров в базу данных

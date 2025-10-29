@@ -135,7 +135,7 @@ async def get_coin_order(
     token: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """"Получить открытые ордера по монете на Bybit."""
+    """Получить открытые ордера по монете на Bybit."""
     user = await user_crud.get_id(token, session)
     coin_name = coin_name.upper()
     return await list_orders(user, coin_name)
