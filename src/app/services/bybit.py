@@ -175,7 +175,7 @@ async def add_coin_order(
     )
 
     try:
-        await run_in_threadpool(
+        result = await run_in_threadpool(
             session.place_order,
             category="spot",  # спотовый рынок
             symbol=symbol,  # торговая пара
@@ -184,11 +184,13 @@ async def add_coin_order(
             qty=qty,  # количество базовой валюты
             price=price,  # цена лимитного ордера
         )
+        return {
+            side: int(result.get("result", {}).get("orderId"))
+        }
     except InvalidRequestError as e:
-        return (
-            f'{symbol}: {side} Ошибка API при создании ордера: {str(e)}')
-    else:
-        return f'✅ {symbol}: {side} ордер создан'
+        return {
+            side: f'{symbol}: Ошибка API при создании ордера: {str(e)}'
+        }
 
 
 def round_down(balance: Decimal, base_precision: int) -> Decimal:
@@ -217,3 +219,17 @@ async def list_orders(user: User, symbol: str):
             coin['side']: int(coin['orderId']),
         })
     return result
+
+
+async def delete_coin_order(user: User, symbol=None):
+    """ Удалить все или один ордер """
+
+    symbol = symbol + "USDT"
+    session = await bybit_session(
+        user.api_key,
+        user.api_secret,
+        user.demo
+    )
+
+    await run_in_threadpool(
+        session.cancel_all_orders, category="spot", symbol=symbol)

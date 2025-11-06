@@ -10,7 +10,7 @@ from app.crud import coin_crud, user_crud
 from app.api.validators import (
     check_coin_user, check_slot_and_coin, check_not_coin_user,
     check_has_api_key, validate_start_coin)
-from app.services.bybit import get_info_coin
+from app.services.bybit import get_info_coin, delete_coin_order
 
 
 # Создаем главный роутер для API
@@ -57,8 +57,12 @@ async def delete_coin(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Удаление монеты по ID."""
-    user_coins = await coin_crud.get_id(coin_id, session)
+    user_coins = await coin_crud.get_coin_all(coin_id, session)
     await check_not_coin_user(user_coins, token)
+
+    # Удаляем ордера с биржи
+    await delete_coin_order(user_coins.user, user_coins.name)
+
     return await coin_crud.remove(user_coins, session)
 
 

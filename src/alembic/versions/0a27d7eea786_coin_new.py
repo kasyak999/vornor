@@ -1,8 +1,8 @@
-"""coin
+"""coin_new
 
-Revision ID: f9136c66d172
+Revision ID: 0a27d7eea786
 Revises: 
-Create Date: 2025-10-29 20:57:44.758318
+Create Date: 2025-11-06 21:39:47.011500
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'f9136c66d172'
+revision: str = '0a27d7eea786'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -39,8 +39,8 @@ def upgrade() -> None:
     sa.Column('cycle', sa.Boolean(), nullable=False, comment='Зацикливание монеты true / false на покупку и продажу'),
     sa.Column('price_buy', sa.Float(), nullable=True, comment='Курс первой покупки монеты'),
     sa.Column('last_price_buy', sa.Float(), nullable=True, comment='Курс последней покупки монеты'),
-    sa.Column('order_buy_id', sa.Integer(), nullable=True, comment='ID ордера на покупку'),
-    sa.Column('order_sell_id', sa.Integer(), nullable=True, comment='ID ордера на продажу'),
+    sa.Column('order_buy_id', sa.BigInteger(), nullable=True, comment='ID ордера на покупку'),
+    sa.Column('order_sell_id', sa.BigInteger(), nullable=True, comment='ID ордера на продажу'),
     sa.Column('count_buy', sa.Integer(), nullable=False, comment='Количество покупок монеты'),
     sa.Column('user_id', sa.Integer(), nullable=False, comment='ID пользователя'),
     sa.Column('start', sa.Boolean(), nullable=False, comment='Запущена ли монета на торговлю'),

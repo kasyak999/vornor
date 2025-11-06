@@ -54,3 +54,5 @@ class CoinDB(CoinBase):
     id: int
     name: str
     buy: int
+    order_buy_id: Optional[int]
+    order_sell_id: Optional[int]

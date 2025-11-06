@@ -1,7 +1,9 @@
-from sqlalchemy import String, Float, Boolean, ForeignKey, Integer
+from sqlalchemy import (
+    String, Float, Boolean, ForeignKey, Integer, BigInteger)
 from app.core.db import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import UniqueConstraint
+from typing import Optional
 
 
 class Coin(Base):
@@ -37,13 +39,14 @@ class Coin(Base):
         nullable=True,
         comment='Курс последней покупки монеты',
     )
-    order_buy_id: Mapped[int] = mapped_column(
-        Integer,
+    order_buy_id: Mapped[Optional[int]] = mapped_column(
+        BigInteger,
         nullable=True,
         comment='ID ордера на покупку',
     )
-    order_sell_id: Mapped[int] = mapped_column(
-        Integer,
+
+    order_sell_id: Mapped[Optional[int]] = mapped_column(
+        BigInteger,
         nullable=True,
         comment='ID ордера на продажу',
     )

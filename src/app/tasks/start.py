@@ -5,7 +5,8 @@ from app.core.db import sync_engine
 from sqlalchemy.orm import Session
 
 from app.services.bybit import (
-    bybit_coin_balance, add_coin_order, get_info_coin, round_down
+    bybit_coin_balance, add_coin_order, get_info_coin, round_down,
+    delete_coin_order
 )
 from asgiref.sync import async_to_sync
 from decimal import Decimal
@@ -19,7 +20,7 @@ PROCENT_BUY = 0.95
 def start_task():
     """
     Осуществляется поиск монет в базе данных у которых стоит
-    флаг start=True
+    флаг start=True и нет установленных ордеров на покупку или продажу.
     """
     with Session(sync_engine) as session:
         coins = session.scalars(
@@ -54,7 +55,7 @@ def coin_orders_task(coin_id: int):
             coin.start = False
             session.commit()
             return (
-                f"Недостаточно средств для ордера {coin.name}: "
+                f"Недостаточно монет для ордера {coin.name}: "
                 f"баланс={balance}, "
                 f"минимум={min_order_qty}"
             )
@@ -65,6 +66,10 @@ def coin_orders_task(coin_id: int):
         buy_price = round(
             coin.price_buy * PROCENT_BUY, ticker['znak_price'])
 
+        # Удаляем старые ордера если они есть
+        async_to_sync(delete_coin_order)(coin.user, coin.name)
+
+        # Создаем новые ордера
         sell_order = async_to_sync(add_coin_order)(
             user=coin.user,
             symbol=coin.name + 'USDT',
@@ -72,7 +77,6 @@ def coin_orders_task(coin_id: int):
             price=sell_price,
             side='Sell'
         )
-
         buy_order = async_to_sync(add_coin_order)(
             user=coin.user,
             symbol=coin.name + 'USDT',
@@ -80,5 +84,20 @@ def coin_orders_task(coin_id: int):
             price=buy_price,
             side='Buy'
         )
-        # Создать новую задачу и записать ид ордеров в базу данных
+
+        # Получаем ID ордеров и сохраняем в базу
+        for order in [sell_order, buy_order]:
+            if not order:
+                continue
+
+            # Извлекаем ключ (Buy/Sell) и значение (ID или ошибка)
+            side, value = next(iter(order.items()))
+
+            is_valid_id = value if isinstance(value, int) else None
+            if side == 'Buy':
+                coin.order_buy_id = is_valid_id
+            elif side == 'Sell':
+                coin.order_sell_id = is_valid_id
+
+        session.commit()
         return sell_order, buy_order
