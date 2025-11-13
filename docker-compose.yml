@@ -21,3 +21,40 @@ services:
     ]
     volumes:
     - data_redis:/data
+  web:
+    build: ./src/
+    command: >
+      sh -c "alembic upgrade head &&
+      uvicorn app.main:app --host 0.0.0.0 --port 7000 --proxy-headers"
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+    ports:
+      - "7000:7000"
+  celery_worker:
+    build: ./src/
+    command: celery -A app.core.celery_worker worker --loglevel=info
+    depends_on:
+      - web
+    env_file:
+      - .env
+  celery_beat:
+    build: ./src/
+    command: celery -A app.core.celery_worker beat --loglevel=info
+    depends_on:
+      - web
+      - celery_worker
+    env_file:
+      - .env
+  flower:
+    build: ./src/
+    command: >
+      sh -c "celery -A app.core.celery_worker flower
+      --basic_auth=0:${REDIS_PASS}"
+    ports:
+      - "5555:5555"
+    depends_on:
+      - celery_worker
+    env_file:
+      - .env 

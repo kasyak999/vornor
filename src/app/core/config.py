@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     secret: str = 'SECRET'
     redis_pass: str = 'mystrongpassword'
 
-    DEBUG: bool = True
+    DEBUG: bool = False
 
     @property
     def database_url(self) -> str:
