@@ -10,7 +10,7 @@ services:
     ports:
       - "${POSTGRES_PORT}:5432"
   redis:
-    build: ./src/redis/
+    build: ./redis/
     container_name: redis_service
     restart: always
     ports:
@@ -60,7 +60,7 @@ services:
     env_file:
       - .env 
   nginx:
-    build: ./src/nginx/
+    build: ./nginx/
     depends_on:
       - backend
       - flower
