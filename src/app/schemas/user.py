@@ -1,9 +1,9 @@
 from pydantic import (
-    BaseModel, ConfigDict, field_validator, model_validator, computed_field)
+    BaseModel, ConfigDict, field_validator, computed_field)
 from typing import Optional, List
 from passlib.context import CryptContext
-from .coinslot import CoinSlotData
-from .coin import CoinDB
+from app.schemas.coinslot import CoinSlotData
+from app.schemas.coin import CoinDB
 
 
 class UserCreate(BaseModel):

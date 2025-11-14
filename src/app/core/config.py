@@ -27,8 +27,7 @@ class Settings(BaseSettings):
         return db + db_host + f'/{self.postgres_db}'
 
     class Config:
-        # env_file = '.env'
-        env_file = '../.env'
+        env_file = '.env'
 
 
 settings = Settings()

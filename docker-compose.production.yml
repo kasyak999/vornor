@@ -1,0 +1,68 @@
+volumes:
+  db_data:
+  data_redis:
+services:
+  db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT}:5432"
+  redis:
+    image: kasyak999/vornor_redis:latest
+    container_name: redis_service
+    restart: always
+    ports:
+      - "6380:6379"
+    command: [
+      "redis-server", "/usr/local/etc/redis/redis.conf",
+      "--requirepass", "${REDIS_PASS}"
+    ]
+    volumes:
+    - data_redis:/data
+  backend:
+    image: kasyak999/vornor_backend:latest
+    command: >
+      sh -c "alembic upgrade head &&
+      uvicorn app.main:app --host 0.0.0.0 --port 7000 --proxy-headers"
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+    ports:
+      - "7000:7000"
+  celery_worker:
+    image: kasyak999/vornor_backend:latest
+    command: celery -A app.core.celery_worker worker --loglevel=info
+    depends_on:
+      - backend
+    env_file:
+      - .env
+  celery_beat:
+    image: kasyak999/vornor_backend:latest
+    command: celery -A app.core.celery_worker beat --loglevel=info
+    depends_on:
+      - backend
+      - celery_worker
+    env_file:
+      - .env
+  flower:
+    image: kasyak999/vornor_backend:latest
+    command: >
+      sh -c "celery -A app.core.celery_worker flower
+      --basic_auth=0:${REDIS_PASS}
+      --url_prefix=/flower/"
+    ports:
+      - "5555:5555"
+    depends_on:
+      - celery_worker
+    env_file:
+      - .env 
+  nginx:
+    image: kasyak999/vornor_nginx:latest
+    depends_on:
+      - backend
+      - flower
+    ports:
+      - 8000:80

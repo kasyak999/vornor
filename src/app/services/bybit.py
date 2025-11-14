@@ -1,7 +1,6 @@
 from pybit.unified_trading import HTTP
 from fastapi import HTTPException
 from http import HTTPStatus
-from pprint import pprint
 from starlette.concurrency import run_in_threadpool
 from pybit.exceptions import InvalidRequestError
 from app.models import User
