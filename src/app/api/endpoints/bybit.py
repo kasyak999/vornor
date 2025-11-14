@@ -7,6 +7,8 @@ from app.services.user import get_current_user
 from app.services.bybit import (
     bybit_balance, bybit_coin_balance, get_info_coin, list_orders)
 
+import app.tasks as tasks
+
 
 router = APIRouter(prefix='/bybit', tags=['Работа с bybit'])
 
@@ -125,9 +127,6 @@ async def get_coin_info(
     return await get_info_coin(user, coin_name)
 
 
-import app.tasks as tasks
-
-
 @router.get(
     "/order/{coin_name}",
     summary='Получить открытые ордера по монете',
@@ -141,7 +140,7 @@ async def get_coin_order(
     """Получить открытые ордера по монете на Bybit."""
     user = await user_crud.get_id(token, session)
     coin_name = coin_name.upper()
-    
+
     tasks.new_task.delay()
 
     return await list_orders(user, coin_name)

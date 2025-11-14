@@ -101,5 +101,3 @@ def coin_orders_task(coin_id: int):
 
         session.commit()
         return sell_order, buy_order
-
-# Пока вск готово
