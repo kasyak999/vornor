@@ -90,6 +90,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         source: "docker-compose.production.yml"
         target: "vornor"
+  
     # - name: Выполнение удаленных команд ssh для развертывания
     #   uses: appleboy/ssh-action@703ffa3c1ee959aa3694ac64b3a8a9bfa38c2c20
     #   with:
