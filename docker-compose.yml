@@ -21,7 +21,7 @@ services:
     ]
     volumes:
     - data_redis:/data
-  web:
+  backend:
     build: ./src/
     command: >
       sh -c "alembic upgrade head &&
@@ -36,14 +36,14 @@ services:
     build: ./src/
     command: celery -A app.core.celery_worker worker --loglevel=info
     depends_on:
-      - web
+      - backend
     env_file:
       - .env
   celery_beat:
     build: ./src/
     command: celery -A app.core.celery_worker beat --loglevel=info
     depends_on:
-      - web
+      - backend
       - celery_worker
     env_file:
       - .env
@@ -51,10 +51,18 @@ services:
     build: ./src/
     command: >
       sh -c "celery -A app.core.celery_worker flower
-      --basic_auth=0:${REDIS_PASS}"
+      --basic_auth=0:${REDIS_PASS}
+      --url_prefix=/flower/"
     ports:
       - "5555:5555"
     depends_on:
       - celery_worker
     env_file:
       - .env 
+  nginx:
+    build: ./src/nginx/
+    depends_on:
+      - backend
+      - flower
+    ports:
+      - 8000:80

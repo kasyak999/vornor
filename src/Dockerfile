@@ -1,8 +1,8 @@
 FROM python:3.13.7
 
-WORKDIR /srs
+WORKDIR /src
 
-COPY . /srs
+COPY . /src
 
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt

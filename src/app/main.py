@@ -38,7 +38,8 @@ app = FastAPI(
 app.include_router(api_router)
 
 authentication_backend = AdminAuth(secret_key=settings.secret)
-admin = Admin(app, engine, authentication_backend=authentication_backend)
+admin = Admin(
+    app, engine, authentication_backend=authentication_backend)
 admin.add_view(UserAdmin)
 admin.add_view(CoinAdmin)
 admin.add_view(CoinSlotAdmin)
