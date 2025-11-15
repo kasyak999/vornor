@@ -7,14 +7,9 @@ services:
     env_file: .env
     volumes:
       - db_data:/var/lib/postgresql/data
-    ports:
-      - "5432"
   redis:
     image: kasyak999/vornor_redis:latest
-    # container_name: redis_service
     restart: always
-    ports:
-      - "6379"
     command: [
       "redis-server", "/usr/local/etc/redis/redis.conf",
       "--requirepass", "${REDIS_PASS}"
@@ -30,8 +25,6 @@ services:
       - db
       - redis
     env_file: .env
-    ports:
-      - "7000"
   celery_worker:
     image: kasyak999/vornor_backend:latest
     command: celery -A app.core.celery_worker worker --loglevel=info
@@ -53,8 +46,6 @@ services:
       sh -c "celery -A app.core.celery_worker flower
       --basic_auth=0:${REDIS_PASS}
       --url_prefix=/flower/"
-    ports:
-      - "5555"
     depends_on:
       - celery_worker
     env_file:

@@ -3,11 +3,8 @@ from celery.schedules import crontab
 from app.core.config import settings
 
 
-CELERY_HOST = 'localhost' if settings.DEBUG else 'redis'
-REDIS_PORT = '6380' if settings.DEBUG else '6379'
-BROKER = (
-    f'redis://:{settings.redis_pass}@{CELERY_HOST}:{REDIS_PORT}/0'
-)
+REDIS_HOST = 'localhost:6380' if settings.DEBUG else 'redis'
+BROKER = f'redis://:{settings.redis_pass}@{REDIS_HOST}/0'
 celery_app = Celery("Селери", broker=BROKER, backend=BROKER)
 celery_app.autodiscover_tasks([
     "app.tasks",       # ищет все задачии в папке app/tasks
