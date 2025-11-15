@@ -42,6 +42,7 @@ class SQLAdminForceHTTPSMiddleware(BaseHTTPMiddleware):
 app = FastAPI(
     title=settings.app_title,
     description=settings.description,
+    version=settings.version,
     lifespan=lifespan,
 )
 app.add_middleware(SQLAdminForceHTTPSMiddleware)
