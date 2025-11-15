@@ -36,7 +36,7 @@ class CoinAdmin(ModelView, model=Coin):
         Coin.name, Coin.user, Coin.cycle, Coin.start, Coin.created_at]
     name = "монету"
     name_plural = "Монеты"
-    column_labels = {**get_column_comments(User), **{
+    column_labels = {**get_column_comments(Coin), **{
         "user": "Телеграм id",
     }}
 
