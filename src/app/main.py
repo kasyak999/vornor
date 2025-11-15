@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from app.core.config import settings
 from app.api.routers import api_router
 
@@ -49,3 +49,11 @@ admin.add_view(UserAdmin)
 admin.add_view(CoinAdmin)
 admin.add_view(CoinSlotAdmin)
 
+
+@app.get("/check")
+def check(request: Request):
+    return {
+        "scheme": request.url.scheme,
+        "host": request.url.hostname,
+        "port": request.url.port
+    }
