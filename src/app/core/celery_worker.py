@@ -3,7 +3,7 @@ from celery.schedules import crontab
 from app.core.config import settings
 
 
-CELERY_HOST = 'localhost' if settings.DEBUG else 'redis_service'
+CELERY_HOST = 'localhost' if settings.DEBUG else 'redis'
 REDIS_PORT = '6380' if settings.DEBUG else '6379'
 BROKER = (
     f'redis://:{settings.redis_pass}@{CELERY_HOST}:{REDIS_PORT}/0'
