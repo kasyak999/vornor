@@ -47,22 +47,22 @@ services:
       - celery_worker
     env_file:
       - .env
-  flower:
-    image: kasyak999/vornor_backend:latest
-    command: >
-      sh -c "celery -A app.core.celery_worker flower
-      --basic_auth=0:${REDIS_PASS}
-      --url_prefix=/flower/"
-    ports:
-      - "5555:5555"
-    depends_on:
-      - celery_worker
-    env_file:
-      - .env 
+  # flower:
+  #   image: kasyak999/vornor_backend:latest
+  #   command: >
+  #     sh -c "celery -A app.core.celery_worker flower
+  #     --basic_auth=0:${REDIS_PASS}
+  #     --url_prefix=/flower/"
+  #   ports:
+  #     - "5555:5555"
+  #   depends_on:
+  #     - celery_worker
+  #   env_file:
+  #     - .env 
   nginx:
     image: kasyak999/vornor_nginx:latest
     depends_on:
       - backend
-      - flower
+      # - flower
     ports:
       - 8000:80
