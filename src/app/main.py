@@ -11,6 +11,7 @@ from typing import AsyncGenerator
 from loguru import logger
 import sys
 from app.core.init_db import add_admin
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 
 logger.remove()
@@ -37,9 +38,14 @@ app = FastAPI(
 
 app.include_router(api_router)
 
+# Доверяем прокси, которые передают заголовки
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
+
+
 authentication_backend = AdminAuth(secret_key=settings.secret)
 admin = Admin(
     app, engine, authentication_backend=authentication_backend)
 admin.add_view(UserAdmin)
 admin.add_view(CoinAdmin)
 admin.add_view(CoinSlotAdmin)
+
