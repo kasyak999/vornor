@@ -91,22 +91,22 @@ jobs:
         source: "docker-compose.production.yml"
         target: "vornor"
   
-    # - name: Выполнение удаленных команд ssh для развертывания
-    #   uses: appleboy/ssh-action@703ffa3c1ee959aa3694ac64b3a8a9bfa38c2c20
-    #   with:
-    #     host: ${{ secrets.HOST }}
-    #     username: ${{ secrets.USER }}
-    #     key: ${{ secrets.SSH_KEY }}
-    #     script: |
-    #       cd bot-telega
-    #       echo "--- Обновляем compose"
-    #       echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker compose -f docker-compose.production.yml pull
-    #       echo "--- Остановить compose"
-    #       echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker compose -f docker-compose.production.yml down
-    #       echo "--- Запуск compose в фоне"
-    #       echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker compose -f docker-compose.production.yml up -d
-    #       echo "--- Очищаем мусор в докерах"
-    #       echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker system prune -af
+    - name: Выполнение удаленных команд ssh для развертывания
+      uses: appleboy/ssh-action@703ffa3c1ee959aa3694ac64b3a8a9bfa38c2c20
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd bot-telega
+          echo "--- Обновляем compose"
+          echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker compose -f docker-compose.production.yml pull
+          echo "--- Остановить compose"
+          echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker compose -f docker-compose.production.yml down
+          echo "--- Запуск compose в фоне"
+          echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker compose -f docker-compose.production.yml up -d
+          echo "--- Очищаем мусор в докерах"
+          echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker system prune -af
 
 
 
