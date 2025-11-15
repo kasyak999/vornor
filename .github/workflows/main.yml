@@ -98,7 +98,7 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          cd bot-telega
+          cd vornor
           echo "--- Обновляем compose"
           echo ${{ secrets.SUDO_PASSWORD }} | sudo -S docker compose -f docker-compose.production.yml pull
           echo "--- Остановить compose"
