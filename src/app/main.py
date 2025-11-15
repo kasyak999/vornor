@@ -11,6 +11,7 @@ from typing import AsyncGenerator
 from loguru import logger
 import sys
 from app.core.init_db import add_admin
+from starlette.middleware.base import BaseHTTPMiddleware
 
 
 logger.remove()
@@ -37,18 +38,20 @@ app = FastAPI(
 
 app.include_router(api_router)
 
+
+class SQLAdminForceHTTPSMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        if request.url.path.startswith("/admin"):  # путь админки
+            request.scope["scheme"] = "https"
+        return await call_next(request)
+
+
+app.add_middleware(SQLAdminForceHTTPSMiddleware)
+
+
 authentication_backend = AdminAuth(secret_key=settings.secret)
 admin = Admin(
     app, engine, authentication_backend=authentication_backend)
 admin.add_view(UserAdmin)
 admin.add_view(CoinAdmin)
 admin.add_view(CoinSlotAdmin)
-
-
-@app.get("/check")
-def check(request: Request):
-    return {
-        "scheme": request.url.scheme,
-        "host": request.url.hostname,
-        "port": request.url.port
-    }
