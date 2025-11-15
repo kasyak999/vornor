@@ -30,24 +30,22 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     yield
     logger.info('Завершение работы приложения')
 
-app = FastAPI(
-    title=settings.app_title,
-    description=settings.description,
-    lifespan=lifespan,
-)
-
-app.include_router(api_router)
-
 
 class SQLAdminForceHTTPSMiddleware(BaseHTTPMiddleware):
+    """Промежуточное ПО для принудительного использования HTTPS в SQLAdmin."""
     async def dispatch(self, request: Request, call_next):
         if request.url.path.startswith("/admin"):  # путь админки
             request.scope["scheme"] = "https"
         return await call_next(request)
 
 
+app = FastAPI(
+    title=settings.app_title,
+    description=settings.description,
+    lifespan=lifespan,
+)
 app.add_middleware(SQLAdminForceHTTPSMiddleware)
-
+app.include_router(api_router)
 
 authentication_backend = AdminAuth(secret_key=settings.secret)
 admin = Admin(
