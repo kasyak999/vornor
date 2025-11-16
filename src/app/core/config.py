@@ -6,7 +6,7 @@ class Settings(BaseSettings):
 
     app_title: str = 'vornor'
     description: str = 'Систеама для торговли криптовалютой'
-    version: str = '1.0.0'
+    version: str = '1.1'
 
     postgres_user: str = 'user'
     postgres_password: str = 'mysecretpassword'

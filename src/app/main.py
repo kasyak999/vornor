@@ -45,7 +45,10 @@ app = FastAPI(
     version=settings.version,
     lifespan=lifespan,
 )
-app.add_middleware(SQLAdminForceHTTPSMiddleware)
+
+if not settings.DEBUG:
+    app.add_middleware(SQLAdminForceHTTPSMiddleware)
+
 app.include_router(api_router)
 
 authentication_backend = AdminAuth(secret_key=settings.secret)
