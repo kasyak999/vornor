@@ -16,14 +16,18 @@ router = APIRouter(prefix='/user', tags=['Работа с пользовател
 
 @router.post(
     "/register",
-    summary='Регистрация',
+    summary='Регистрация нового пользователя.',
     response_model=UserDB,
 )
 async def register(
     telegram_id: UserCreate,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Регистрация нового пользователя."""
+    """
+    **telegram_id** - ид\n
+    **password** - пароль, нужен только если пользователю нужен
+    доступ в админку
+    """
     user = await user_crud.get_user_by_telegram_id(
         telegram_id.telegram_id, session)
     await check_user(user)
@@ -34,14 +38,14 @@ async def register(
 
 @router.post(
     "/token",
-    summary='Получение токена',
+    summary='Получить токен для авторизации.',
     response_model=UserToken,
 )
 async def post_token(
     telegram_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Токен для зарегистрированного пользователя."""
+    """Получить токен для авторизации через ***telegram_id***."""
     user = await user_crud.get_user_by_telegram_id(
         telegram_id, session)
     await check_not_user(user)
@@ -52,28 +56,41 @@ async def post_token(
 @router.get(
     "/",
     response_model=UserAllDB,
-    summary='Личный кабинет',
+    summary='Получение информации пользователя',
     response_model_exclude_none=True
 )
 async def get_me(
     token: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Получение информации о пользователе."""
+    """
+    **id** ид пользователя\n
+    **telegram_id** телеграм ид\n
+    **api_key** для работы с bybit\n
+    **api_secret** для работы с bybit\n
+    **demo** true - демо режим, false - реальный режим\n
+    **coin_slots** дата окончания слотов\n
+    **coins** монеты для работы\n
+    **count_clots** количество слотов (в демо режиме не учитывается)
+    """
     return await user_crud.get_user_all(token, session)
 
 
 @router.patch(
     "/",
     response_model=UserDB,
-    summary='Обновление данных пользователя',
+    summary='Обновление данных пользователя.',
 )
 async def patch_me(
     obj_in: UserUpdate,
     token: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Обновление данных пользователя."""
+    """
+    **api_key** выдает bybit\n
+    **api_secret** выдает bybit\n
+    **demo** определяется автоматически по api_key
+    """
     user = await user_crud.get_user_all(token, session)
     obj_in.demo = await validate_bybit_keys(obj_in.api_key, obj_in.api_secret)
     user.coins.clear()

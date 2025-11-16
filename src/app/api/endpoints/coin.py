@@ -19,7 +19,7 @@ router = APIRouter(prefix='/coin', tags=['Работа с монетой'])
 
 @router.post(
     "/",
-    summary='Добавить монету',
+    summary='Добавить новую монету.',
     response_model=CoinDB,
     response_model_exclude_none=True,
 )
@@ -28,7 +28,10 @@ async def post_coin(
     token: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Добавление новой монеты для пользователя."""
+    """
+    **name** название монеты\n
+    **user_id** указывается автоматически
+    """
     user = await user_crud.get_user_all(token, session)
     # Проверяем есть ли api ключ у пользователя
     await check_has_api_key(user)
@@ -49,14 +52,16 @@ async def post_coin(
     '/{coin_id}',
     response_model=CoinDB,
     response_model_exclude_none=True,
-    summary='Удаление монеты по ID',
+    summary='Удалить монету.',
 )
 async def delete_coin(
         coin_id: int,
         token: User = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session),
 ):
-    """Удаление монеты по ID."""
+    """
+    **coin_id** id монеты
+    """
     user_coins = await coin_crud.get_coin_all(coin_id, session)
     await check_not_coin_user(user_coins, token)
 
@@ -70,7 +75,7 @@ async def delete_coin(
     '/{coin_id}',
     response_model=CoinDB,
     response_model_exclude_none=True,
-    summary='Изменение монеты',
+    summary='Изменить монету.',
 )
 async def patch_coin(
         coin_id: int,
@@ -78,7 +83,14 @@ async def patch_coin(
         token: User = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session),
 ):
-    """Изменение монеты."""
+    """
+    **coin_id** id монеты\n
+    **buy_usdt** На сколько USDT покупать монету если стоит в цикле\n
+    **cycle** Зацикливание монеты true / false на покупку и продажу\n
+    **price_buy** Курс покупки монеты\n
+    **count_buy** Количество покупок монеты, при просадке курса\n
+    **start** Запуск монеты в торговлю\n
+    """
     user_coins = await coin_crud.get_id(coin_id, session)
     await check_not_coin_user(user_coins, token)
     await validate_start_coin(user_coins, coin_edit)

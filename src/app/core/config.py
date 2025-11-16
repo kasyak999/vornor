@@ -4,9 +4,15 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """Настройки подключения к базе данных."""
 
-    app_title: str = 'vornor'
-    description: str = 'Систеама для торговли криптовалютой'
-    version: str = '1.0.0'
+    app_title: str = 'VORNOR'
+    description: str = (
+        '<b>VORNOR</b> - автоматизируй сделки, снижай риски и получай доход.'
+        '<br>Помощник в торговле криптовалюты.<br>'
+        'Автоматически покупает и продаёт по каждой монете при '
+        'достижении цели.<br>'
+        'Поддерживает несколько активов одновременно, экономит '
+        'время и снижает торговые риски.')
+    version: str = '1.1'
 
     postgres_user: str = 'user'
     postgres_password: str = 'mysecretpassword'
