@@ -40,10 +40,12 @@ class SQLAdminForceHTTPSMiddleware(BaseHTTPMiddleware):
 
 
 app = FastAPI(
+    # debug=False,
     title=settings.app_title,
     description=settings.description,
     version=settings.version,
     lifespan=lifespan,
+    
 )
 
 if not settings.DEBUG:
