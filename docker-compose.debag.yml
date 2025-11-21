@@ -1,0 +1,22 @@
+volumes:
+  db_data:
+  data_redis:
+services:
+  db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT}:5432"
+  redis:
+    build: ./redis/
+    restart: always
+    ports:
+      - "6380:6379"
+    command: [
+      "redis-server", "/usr/local/etc/redis/redis.conf",
+      "--requirepass", "${REDIS_PASS}"
+    ]
+    volumes:
+    - data_redis:/data
