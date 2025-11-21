@@ -36,7 +36,7 @@ Backend
 
 
 ## Установка и запуск
-Запасутить докер файл
+Запустить докер файл [docker-compose.production.yml](docker-compose.production.yml) командой:
 ```bash
 sudo docker compose -f docker-compose.production.yml up --build 
 ```
