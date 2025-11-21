@@ -8,7 +8,7 @@ async def check_user(user: User | None) -> None:
     """Проверка пользователя на существование"""
     if user is not None:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
+            status_code=HTTPStatus.CONFLICT,
             detail="Пользователь уже зарегистрирован")
 
 

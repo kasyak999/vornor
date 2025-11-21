@@ -1,4 +1,4 @@
-from sqlalchemy import Integer
+from sqlalchemy import BigInteger
 from app.core.db import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -7,7 +7,7 @@ class User(Base):
     """Модель пользователя."""
 
     telegram_id: Mapped[int] = mapped_column(
-        Integer,
+        BigInteger,
         nullable=False,
         unique=True,
         comment='Телеграм id',

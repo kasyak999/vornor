@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import get_async_session
 from app.crud import user_crud, coinslot_crud
@@ -18,7 +18,6 @@ router = APIRouter(prefix='/user', tags=['Работа с пользовател
     "/register",
     summary='Регистрация нового пользователя.',
     response_model=UserDB,
-    status_code=status.HTTP_201_CREATED
 )
 async def register(
     telegram_id: UserCreate,
@@ -74,7 +73,9 @@ async def get_me(
     **coins** монеты для работы\n
     **count_clots** количество слотов (в демо режиме не учитывается)
     """
-    return await user_crud.get_user_all(token, session)
+    user = await user_crud.get_user_all(token, session)
+    await check_not_user(user)
+    return user
 
 
 @router.patch(
