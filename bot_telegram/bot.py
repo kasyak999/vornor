@@ -5,11 +5,14 @@ from dotenv import load_dotenv
 from pprint import pprint
 import aiohttp
 from http import HTTPStatus
+from loguru import logger
 
 
 load_dotenv()
 TOKEN_BOT = os.getenv('TOKEN_BOT')
-DOMEN = 'http://127.0.0.1:8000'
+
+# DOMEN = 'http://127.0.0.1:8000'
+DOMEN = 'http://nginx'
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -71,4 +74,5 @@ def main():
 
 
 if __name__ == "__main__":
+    logger.info('Запуск бота Telegram')
     main()

@@ -70,6 +70,28 @@ jobs:
           context: ./redis/
           push: true
           tags: kasyak999/vornor_redis:latest
+  push_to_dockerhub_bot_telegram:
+    permissions: 
+      contents: read
+    name: Отправка образа bot_telegram
+    runs-on: ubuntu-latest
+    # needs: backend_tests
+    steps:
+      - name: Получение исходного кода из репозитория
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Установка сборщика контейнеров Docker
+        uses: docker/setup-buildx-action@6524bf65af31da8d45b59e8c27de4bd072b392f5
+      - name: Авторизация на Docker Hub
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }} 
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Одновременный билд и пуш образа в Docker Hub
+        uses: docker/build-push-action@67a2d409c0a876cbe6b11854e3e25193efe4e62d
+        with:
+          context: ./bot_telegram/
+          push: true
+          tags: kasyak999/vornor_bot_telegram:latest
   deploy:
     permissions: 
       contents: read
@@ -79,6 +101,7 @@ jobs:
       - push_to_dockerhub_backend
       - push_to_dockerhub_nginx
       - push_to_dockerhub_redis
+      - push_to_dockerhub_bot_telegram
     steps:
     - name: Получение исходного кода из репозитория
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
