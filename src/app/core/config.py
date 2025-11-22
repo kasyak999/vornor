@@ -19,7 +19,6 @@ class Settings(BaseSettings):
     postgres_db: str = 'django'
     postgres_port: str = '5433'
     secret: str = 'SECRET'
-    redis_pass: str = 'mystrongpassword'
 
     DEBUG: bool = False
 

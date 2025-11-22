@@ -94,7 +94,9 @@ async def patch_me(
     **demo** определяется автоматически по api_key
     """
     user = await user_crud.get_user_all(token, session)
-    obj_in.demo = await validate_bybit_keys(obj_in.api_key, obj_in.api_secret)
+    if obj_in.api_key and obj_in.api_secret:
+        obj_in.demo = await validate_bybit_keys(
+            obj_in.api_key, obj_in.api_secret)
     user.coins.clear()
     return await user_crud.update(user, obj_in, session)
 

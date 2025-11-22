@@ -16,7 +16,7 @@ services:
       - "6380:6379"
     command: [
       "redis-server", "/usr/local/etc/redis/redis.conf",
-      "--requirepass", "${REDIS_PASS}"
+      "--requirepass", "${POSTGRES_PASSWORD}"
     ]
     volumes:
     - data_redis:/data
@@ -50,7 +50,7 @@ services:
     build: ./src/
     command: >
       sh -c "celery -A app.core.celery_worker flower
-      --basic_auth=0:${REDIS_PASS}
+      --basic_auth=0:${POSTGRES_PASSWORD}
       --url_prefix=/flower/"
     ports:
       - "5555:5555"
