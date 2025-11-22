@@ -1,4 +1,5 @@
 from typing import Optional
+from passlib.context import CryptContext
 
 from app.core.config import settings
 from app.core.db import AsyncSessionLocal
@@ -14,5 +15,6 @@ async def add_admin() -> Optional[None]:
             user_in = UserCreate(telegram_id=0)
             result = await user_crud.create(user_in, session)
             result.is_superuser = True
-            result.password = settings.postgres_password
+            pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+            result.password = pwd_context.hash(settings.postgres_password)
             await session.commit()
