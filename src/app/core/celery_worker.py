@@ -4,7 +4,7 @@ from app.core.config import settings
 
 
 REDIS_HOST = 'localhost:6380' if settings.DEBUG else 'redis'
-BROKER = f'redis://:{settings.redis_pass}@{REDIS_HOST}/0'
+BROKER = f'redis://:{settings.postgres_password}@{REDIS_HOST}/0'
 celery_app = Celery("Селери", broker=BROKER, backend=BROKER)
 celery_app.autodiscover_tasks([
     "app.tasks",       # ищет все задачии в папке app/tasks

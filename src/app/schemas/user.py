@@ -9,16 +9,8 @@ from app.schemas.coin import CoinDB
 class UserCreate(BaseModel):
     """Создание пользователя."""
     telegram_id: int
-    password: Optional[str] = None
 
     model_config = ConfigDict(extra='forbid')
-
-    @field_validator('password')
-    @classmethod
-    def validate_password(cls, password_value: str) -> str:
-        """Валидация пароля."""
-        pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
-        return pwd_context.hash(password_value)
 
 
 class UserToken(BaseModel):
@@ -47,11 +39,19 @@ class UserAllDB(UserDB):
 
 class UserUpdate(BaseModel):
     """Обновление пользователя."""
-    api_key: str
-    api_secret: str
+    api_key: Optional[str] = None
+    api_secret: Optional[str] = None
     demo: Optional[bool] = None
+    password: Optional[str] = None
 
     model_config = ConfigDict(extra='forbid')
+
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, password_value: str) -> str:
+        """Валидация пароля."""
+        pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+        return pwd_context.hash(password_value)
 
     # @model_validator(mode='after')
     # def validate_keys_together(self) -> "UserUpdate":
