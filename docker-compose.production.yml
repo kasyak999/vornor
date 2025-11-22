@@ -57,3 +57,10 @@ services:
       - flower
     ports:
       - 8000:80
+  bot:
+    image: kasyak999/vornor_bot_telegram:latest
+    command: python -u bot.py
+    depends_on:
+      - nginx
+    env_file:
+      - .env
