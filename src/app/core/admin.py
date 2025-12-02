@@ -21,9 +21,9 @@ def get_column_comments(model):
 
 class UserAdmin(ModelView, model=User):
     column_list = [
-        User.telegram_id, User.coins, User.coin_slots,
+        User.telegram_id, User.is_superuser, User.coins, User.coin_slots,
         User.demo, User.created_at]
-    name = "пользователя"
+    name = "пользователь"
     name_plural = "Пользователи"
     column_labels = {**get_column_comments(User), **{
         "coins": "Монеты",
@@ -76,6 +76,7 @@ class AdminAuth(AuthenticationBackend):
 
         request.session.update({"user": user.telegram_id})
         return True
+        # Сделать что бы не было ошибки при вводе простого пороля
 
     async def logout(self, request: Request) -> bool:
         request.session.clear()
