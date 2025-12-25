@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     postgres_port: str = '5433'
     secret: str = 'SECRET'
 
-    DEBUG: bool = False
+    DEBUG: bool = True
 
     @property
     def database_url(self) -> str:

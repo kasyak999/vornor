@@ -76,7 +76,7 @@ async def personal_account(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=get_main_keyboard()
         )
     pprint(response.status)
-    await update.callback_query.edit_message_text("Что-то пошло не так.")
+    await update.message.reply_text("Что-то пошло не так.")
 
 
 def get_main_keyboard():
